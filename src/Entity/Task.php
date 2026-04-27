@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Statut; 
 use App\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -16,11 +17,11 @@ class Task
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $status = null;
+    #[ORM\Column(length: 50, enumType: Statut::class)] 
+    private ?Statut $status = Statut::EN_COURS;
 
     #[ORM\Column]
-    private ?bool $isPinned = null;
+    private ?bool $isPinned = false; 
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]
     #[ORM\JoinColumn(nullable: false)]
@@ -45,19 +46,17 @@ class Task
     public function setTitle(string $title): static
     {
         $this->title = $title;
-
         return $this;
     }
 
-    public function getStatus(): ?string
+    public function getStatus(): ?Statut
     {
         return $this->status;
     }
 
-    public function setStatus(string $status): static
+    public function setStatus(Statut $status): self
     {
         $this->status = $status;
-
         return $this;
     }
 
@@ -69,7 +68,6 @@ class Task
     public function setIsPinned(bool $isPinned): static
     {
         $this->isPinned = $isPinned;
-
         return $this;
     }
 
@@ -81,7 +79,6 @@ class Task
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
         return $this;
     }
 
@@ -93,7 +90,6 @@ class Task
     public function setPriority(?Priority $priority): static
     {
         $this->priority = $priority;
-
         return $this;
     }
 
@@ -105,7 +101,6 @@ class Task
     public function setFolder(?Folder $folder): static
     {
         $this->folder = $folder;
-
         return $this;
     }
 }

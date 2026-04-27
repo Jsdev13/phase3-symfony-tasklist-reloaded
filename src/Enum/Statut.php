@@ -1,10 +1,7 @@
 <?php 
 namespace App\Enum;
 
-enum StatusEnum: string
-{
-    case PENDING = 'pending';
-    case COMPLETED = 'completed';
-    case ARCHIVED = 'archived';
-
-} 
+enum Statut: string {
+    case EN_COURS = 'En cours';
+    case TERMINE = 'Terminé';
+}

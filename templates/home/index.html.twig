@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion de Tâches{% endblock %}
+
+{% block body %}
+<div class="flex h-screen bg-[#F9FAFB] relative overflow-hidden">
+
+    <aside class="w-72 bg-white border-r border-gray-200 flex flex-col">
+        <div class="p-6">
+            <a href="{{ path('app_task_index') }}" class="flex items-center gap-3 w-full bg-[#0F172A] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-black transition">
+                <i class="fa-solid fa-house text-sm"></i>
+                Toutes les tâches
+            </a>
+        </div>
+
+        <div class="px-6 py-2 text-[11px] font-bold text-gray-400 uppercase tracking-widest">Dossiers</div>
+        
+        <nav class="flex-1 px-3 space-y-1 overflow-y-auto mt-2">
+            {% for folder in folders %}
+                <a href="#" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 rounded-xl group transition">
+                    <div class="flex items-center gap-3">
+                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <i class="fa-solid fa-folder text-gray-400 group-hover:text-gray-600"></i>
+                        <span class="font-medium">{{ folder.name }}</span>
+                    </div>
+                    <span class="text-xs text-gray-400 font-medium">{{ folder.tasks|length }}</span>
+                </a>
+            {% else %}
+                <p class="px-6 text-sm text-gray-400 italic">Aucun dossier</p>
+                
+            {% endfor %}
+            
+        </nav>
+    </aside>
+
+    <main class="flex-1 flex flex-col">
+        
+        <header class="bg-white border-b border-gray-100 px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">Gestion de Tâches</h1>
+                <p class="text-xs text-gray-500 mt-0.5">Organisez votre journée efficacement</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <a href="{{ path('app_task_new') }}" class="flex items-center gap-2 bg-[#0F172A] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-black transition">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                    Nouvelle tâche
+                </a>
+
+                <a href="#" class="flex items-center gap-2 border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-red-50 hover:text-red-600 transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Déconnexion
+                </a>
+            </div>
+            
+        </header>
+
+     <div class="px-8 py-4 flex items-center gap-6 border-b border-gray-50 bg-white/50">
+    <div class="flex items-center gap-2">
+        <i class="fa-solid fa-filter text-gray-400 text-sm"></i>
+        <span class="text-sm text-gray-500">Filtres :</span>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-gray-700">Priorité</span>
+        <select onchange="updateFilters('priority', this.value)"
+                class="bg-gray-100 border-none rounded-lg text-sm px-3 py-1.5 outline-none cursor-pointer">
+            <option value="">Toutes</option>
+            {% for p in priorities %}
+                <option value="{{ p.id }}" {{ app.request.query.get('priority') == p.id ? 'selected' }}>
+                    {{ p.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="flex items-center gap-2">
+        <span class="text-sm font-medium text-gray-700">Statut</span>
+        <select onchange="updateFilters('status', this.value)"
+                class="bg-gray-100 border-none rounded-lg text-sm px-3 py-1.5 outline-none cursor-pointer">
+            <option value="">Tous</option>
+            <option value="En cours" {{ app.request.query.get('status') == 'En cours' ? 'selected' }}>En cours</option>
+            <option value="Terminé" {{ app.request.query.get('status') == 'Terminé' ? 'selected' }}>Terminé</option>
+        </select>
+          </div>
+     </div>
+
+        <div class="flex-1 overflow-y-auto p-8 space-y-4">
+            {% for task in tasks %}
+                <div class="task-item bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center justify-between group hover:shadow-md transition-all">
+                    <div class="flex items-center gap-5">
+                        <input type="checkbox" 
+                               class="task-toggle-checkbox w-5 h-5 rounded-md border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                               data-id="{{ task.id }}"
+                               {{ task.status.value == 'Terminé' ? 'checked' : '' }}>
+                        
+                        <div>
+                            <div class="flex items-center gap-3">
+                                <h3 class="task-title text-sm font-bold text-gray-800 {{ task.status.value == 'Terminé' ? 'line-through text-gray-400' : '' }}">
+                                    {{ task.title }}
+                                </h3>
+                                
+                                {% set pName = task.priority ? task.priority.name : 'Normal' %}
+                                {% set pColor = {'Urgent': 'bg-red-50 text-red-500', 'Important': 'bg-orange-50 text-orange-500', 'Normal': 'bg-blue-50 text-blue-500'} %}
+                                
+                                <span class="text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-lg font-bold {{ pColor[pName] ?? 'bg-gray-50 text-gray-500' }}">
+                                    {{ pName }}
+                                </span>
+                            </div>
+                            <p class="status-text text-xs text-gray-400 mt-1 font-medium">{{ task.status.value }}</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                         <button class="text-gray-300 hover:text-indigo-500 transition">
+                            <i class="fa-regular fa-bookmark text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                <div class="h-full flex flex-col items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-list-check text-4xl mb-4"></i>
+                    <p class="text-sm font-medium">Aucune tâche pour le moment</p>
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener('change', async (e) => {
+    
+    if (e.target.classList.contains('task-toggle-checkbox')) {
+        const taskId = e.target.dataset.id;
+        
+        try {
+            const res = await fetch(`/task/${taskId}/toggle`, { 
+                method: 'POST',
+            });
+            
+            if (res.ok) {
+                const data = await res.json();
+                
+                const parent = e.target.closest('.task-item');
+                const title = parent.querySelector('.task-title');
+                const statusLabel = parent.querySelector('.status-text');
+
+                statusLabel.textContent = data.newStatus;
+                
+                if (data.newStatus === 'Terminé') {
+                    title.classList.add('line-through', 'text-gray-400');
+                } else {
+                    title.classList.remove('line-through', 'text-gray-400');
+                }
+            }
+        } catch (error) {
+            console.error("Erreur lors du changement de statut :", error);
+            e.target.checked = !e.target.checked;
+        }
+    }
+});
+
+
+function updateFilters(key, value) {
+    const url = new URL(window.location.href);
+    if (value) {
+        url.searchParams.set(key, value);
+    } else {
+        url.searchParams.delete(key);
+    }
+    window.location.href = url.toString();
+}
+</script>
+{% endblock %}
