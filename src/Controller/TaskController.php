@@ -69,7 +69,6 @@ public function index(Request $request, TaskRepository $taskRepository, FolderRe
                 $priority = $priorityRepository->find($priorityId);
                 $task->setPriority($priority);
             }
-
                 $entityManager->persist($task);
                 $entityManager->flush();
 

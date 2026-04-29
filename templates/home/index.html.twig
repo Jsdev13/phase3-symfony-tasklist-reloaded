@@ -19,7 +19,8 @@
             {% for folder in folders %}
                 <a href="#" class="flex items-center justify-between px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 rounded-xl group transition">
                     <div class="flex items-center gap-3">
-                        <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                        <div class="flex items-center"></div>
+                        <span class="w-3 h-3 rounded-full bg-green-600"></span>
                         <i class="fa-solid fa-folder text-gray-400 group-hover:text-gray-600"></i>
                         <span class="font-medium">{{ folder.name }}</span>
                     </div>
@@ -42,10 +43,16 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="{{ path('app_task_new') }}" class="flex items-center gap-2 bg-[#0F172A] text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-black transition">
+                <a href="{{ path('app_task_new') }}" class="flex items-center gap-2 bg-gray-700 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-black transition">
                     <i class="fa-solid fa-plus text-lg"></i>
                     Nouvelle tâche
                 </a>
+
+                <a href="{{ path('app_folder_new') }}" class="flex items-center gap-2 bg-black text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-black transition">
+                    <i class="fa-solid fa-plus text-lg"></i>
+                    Nouveau dossier
+                </a>
+
 
                 <a href="#" class="flex items-center gap-2 border border-gray-200 px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 hover:bg-red-50 hover:text-red-600 transition">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -111,11 +118,6 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-4">
-                         <button class="text-gray-300 hover:text-indigo-500 transition">
-                            <i class="fa-regular fa-bookmark text-lg"></i>
-                        </button>
-                    </div>
                 </div>
             {% else %}
                 <div class="h-full flex flex-col items-center justify-center text-gray-400">
@@ -159,7 +161,6 @@ document.addEventListener('change', async (e) => {
         }
     }
 });
-
 
 function updateFilters(key, value) {
     const url = new URL(window.location.href);
